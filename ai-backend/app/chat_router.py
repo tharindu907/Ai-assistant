@@ -15,6 +15,10 @@ class ChatResponse(BaseModel):
 @router.post("/", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     try:
+        # Log incoming message to verify the input
+        print(f"Received message: {request.message}")
+        
+        # Generate response using the LLM
         response_text = generate_response(request.message)
         return ChatResponse(response=response_text)
     except Exception as e:

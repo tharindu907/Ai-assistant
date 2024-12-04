@@ -39,7 +39,7 @@ const AIAssistant = () => {
 
         try {
             // Send the message to the Flask backend
-            const response = await axios.post('http://127.0.0.1:8000/chat', {
+            const response = await axios.post('http://127.0.0.1:8000/chat/', {
                 message: userMessage,
             });
             

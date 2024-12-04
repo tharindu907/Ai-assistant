@@ -1,21 +1,27 @@
+from langchain_openai import ChatOpenAI
 import os
-from langchain.llms import OpenAI
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Initialize the OpenAI API key
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Set OpenAI API key
+os.environ['OPENAI_API_KEY'] = os.getenv("OPENAI_API_KEY")
 
-if not OPENAI_API_KEY:
-    raise ValueError("OpenAI API key not found. Please set it in .env file.")
+# Initialize the Langchain model
+llm = ChatOpenAI(
+    model="gpt-3.5-turbo",  # Use the desired model
+    temperature=0.7
+)
 
-# Create the OpenAI language model
-llm = OpenAI(temperature=0.7, openai_api_key=OPENAI_API_KEY)
-
-def generate_response(user_input: str) -> str:
-    """
-    Generates a response from the LLM based on user input.
-    """
-    return llm(user_input)
+def generate_response(prompt: str):
+    try:
+        # Using the invoke method instead of the deprecated __call__ method
+        response = llm.invoke([{"role": "user", "content": prompt}])
+        
+        # Check if response is an AIMessage and extract the content correctly
+        if hasattr(response, 'content'):
+            return response.content  # Return the response content from AIMessage
+        else:
+            return "Error: Unexpected response format."
+    except Exception as e:
+        raise Exception(f"Error generating response: {str(e)}")
